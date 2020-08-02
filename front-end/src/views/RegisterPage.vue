@@ -3,34 +3,99 @@
     <div class="row justify-content-center">
       <div class="register-form">
         <div class="logo-wrapper">
-        <img class="logo" src="/static/images/logo.png">
-        <div class="tagline">Open source task management tool</div>
-        <form>
-          <div class="form-group"></div>
-          <div class="form-group"></div>
-          <div class="form-group"></div>
-          <button type="submit" class="btn btn-primary btn-block">
-          </button>
-        </form>
+          <img class="logo" src="/static/images/logo.png">
+          <div class="tagline">Open source task management tool</div>
+          <form @submit.prevent="submitForm">
+            <div v-show="errorMessage" class="alert alert-danger failed">{{ errorMessage }}</div>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" v-model="form.username">
+            </div>
+            <div class="form-group">
+              <label for="emailAddress">Email address</label>
+              <input type="email" class="form-control" id="emailAddress" v-model="form.emailAddress">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" v-model="form.password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Create account</button>
+          </form>
         </div>
       </div>
     </div>
-    <footer class="footer>
-        <span class="copyright"></span>
-        <ul class="footer-links list-inline float-right"></ul>
-      </footer>
+    <footer class="footer">
+      <span class="copyright"></span>
+      <ul class="footer-links list-inline float-right"></ul>
+    </footer>
   </div>
 </template>
 
 <script>
+import registrationService from '@/services/registration'
+
 export default {
-  name: 'RegisterPage'
+  name: 'RegisterPage',
+  data: function () {
+    return {
+      form : {
+        username :'',
+        emailAddress :'',
+        password :''
+      },
+      errorMessage :''
+    }
+  },
+  methods:{
+    submitForm(){
+      registrationService.register(this.form).then(() => {
+        this.$router.push({name: 'LoginPage'})
+      }).catch((error) => {
+        this.errorMessage = 'Failed to register user. ' + error.message
+      })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.container {max-width: 900px;}
-.register-form {margin-top: 50px; max-width: 320px;}
-.logo-wrapper {margin-bottom: 40px;}
-.footer {width:100%; line-height:40px; margin-top:50px;}
+.container {
+  max-width: 900px;
+}
+.register-form {
+  margin-top: 50px;
+  max-width: 320px;
+}
+.logo-wrapper {
+  text-align: center;
+  margin-bottom: 40px;
+  .tagline {
+    line-height: 180%;
+    color: #666;
+  }
+ .logo {
+    max-width: 150px;
+    margin: 0 auto;
+  }
+}
+.register-form {
+  .form-group label {
+    font-weight: bold;
+    color: #555;
+  }
+}
+.footer {
+  width: 100%;
+  font-size: 13px;
+  color: #666;
+  line-height: 40px;
+  border-top: 1px solid #ddd;
+  margin-top: 50px;
+  .list-inline-item {
+    margin-right: 10px;
+  }
+  a {
+    color: #666;
+  }
+}
 </style>
